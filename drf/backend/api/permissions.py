@@ -21,6 +21,22 @@ class IsStaffPermission(permissions.DjangoModelPermissions):
             return False
         return super().has_permission(request, view)
    
+
+class StaffPermission(permissions.DjangoModelPermissions):
+
+    perms_map = {
+        'GET': ['%(app_label)s.delete_%(model_name)s'],
+        'OPTIONS': [],
+        'HEAD': [],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+    }
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not user.is_staff:
+            return False
+        return super().has_permission(request, view)
+   
    
    
    

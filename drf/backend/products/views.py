@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # Custom permission class
-from .permissions import IsStaffPermission
+from api.mixins import IsStaffPermissionMixin
 # end ----->
 
 from api.authentication import TokenAuthentication
@@ -19,21 +19,28 @@ from .serializers import ProductSerializer
 # R-framework generic views pattern starts here
 
 # ListcreateAPI routes -> this class list the endpoint data with a create option
-class ProductCreateAPIView(generics.ListCreateAPIView):
+class ProductCreateAPIView(
+    IsStaffPermissionMixin,
+    generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        # authentication.TokenAuthentication,
-        TokenAuthentication,
-        ]
+
+    # permission_classes = [permissions.IsAdminUser,IsStaffPermission]
+
+    # authentication and permission are now inherited from the deault setting
+
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     # authentication.TokenAuthentication,
+    #     TokenAuthentication,
+    #     ]
 
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     # permission_classes = [permissions.DjangoModelPermissions]
     # permission_classes = [permissions.IsAdminUser, IsStaffPermission]
 
-    permission_classes = [IsStaffPermission]
+    # permission_classes = [IsStaffPermission]
 
 
     def perform_create(self, serializer):
@@ -46,22 +53,38 @@ class ProductCreateAPIView(generics.ListCreateAPIView):
     
 
 
-class ProductListAPIView(generics.ListAPIView):
+class ProductListAPIView(
+    IsStaffPermissionMixin,
+    generics.ListAPIView
+    ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-class ProductDetailAPIView(generics.RetrieveAPIView):
+class ProductDetailAPIView(
+    IsStaffPermissionMixin,
+    generics.RetrieveAPIView
+    ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    # permission_classes = [permissions.IsAdminUser,IsStaffPermission]
 
-class ProductUpdateAPIView(generics.UpdateAPIView):
+
+
+class ProductUpdateAPIView(
+    IsStaffPermissionMixin,
+    generics.UpdateAPIView
+    ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
 
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [IsStaffPermission]
+    # authentication and permission are now inherited from the deault setting
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     TokenAuthentication,
+    #     ]
+    # permission_classes = [permissions.IsAdminUser,IsStaffPermission]
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -70,13 +93,16 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
             
 
 
-class ProductDeleteAPIView(generics.DestroyAPIView):
+class ProductDeleteAPIView(
+    IsStaffPermissionMixin,
+    generics.DestroyAPIView
+    ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
 
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [IsStaffPermission]
+    # permission_classes = [permissions.IsAdminUser,IsStaffPermission]
+    
 
     def perform_destroy(self, instance):
         return super().perform_destroy(instance)
@@ -142,5 +168,4 @@ def product_alt_view(request, pk=None, *args, **kwargs):
             message.Message = "product does not exist"
     
 
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [IsStaffPermission]
+    
