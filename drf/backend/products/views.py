@@ -5,6 +5,11 @@ from rest_framework import authentication,generics, status, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+# Custom permission class
+from .permissions import IsStaffPermission
+# end ----->
+
+from api.authentication import TokenAuthentication
 
 from django.shortcuts import get_object_or_404
 
@@ -13,12 +18,22 @@ from .serializers import ProductSerializer
 
 # R-framework generic views pattern starts here
 
-# ListcreateAPI routes -> this class list thr rndpoint data with a create option
+# ListcreateAPI routes -> this class list the endpoint data with a create option
 class ProductCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes = [
+        authentication.SessionAuthentication,
+        # authentication.TokenAuthentication,
+        TokenAuthentication,
+        ]
+
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    # permission_classes = [permissions.DjangoModelPermissions]
+    # permission_classes = [permissions.IsAdminUser, IsStaffPermission]
+
+    permission_classes = [IsStaffPermission]
 
 
     def perform_create(self, serializer):
@@ -45,6 +60,8 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
     serializer_class = ProductSerializer
     lookup_field = "pk"
 
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [IsStaffPermission]
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -57,6 +74,9 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
+
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [IsStaffPermission]
 
     def perform_destroy(self, instance):
         return super().perform_destroy(instance)
@@ -120,3 +140,7 @@ def product_alt_view(request, pk=None, *args, **kwargs):
             return Response(data.data, status=204)
         else:
             message.Message = "product does not exist"
+    
+
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [IsStaffPermission]
