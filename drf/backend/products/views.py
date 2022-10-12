@@ -1,6 +1,7 @@
 # from turtle import title
 from email import message
 from pydoc import apropos
+from urllib import request
 from rest_framework import authentication,generics, status, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -48,9 +49,16 @@ class ProductCreateAPIView(
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user, content=content)
     
-    
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        print(*args)
+        request = self.request
+        user = request.user
+        if not user.is_authenticated:
+            return Product.objects.none()
+        return qs.filter(user=request.user)
 
 
 class ProductListAPIView(
