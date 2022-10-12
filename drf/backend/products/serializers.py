@@ -1,7 +1,9 @@
+from wsgiref.validate import validator
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from .models import Product
+from .validators import validate_title
 
 class ProductSerializer(serializers.ModelSerializer):
     my_discount = serializers.SerializerMethodField(read_only=True)
@@ -10,6 +12,8 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name='product-detail',
         lookup_field='pk',
     )
+    title = serializers.CharField(validators=[validate_title])
+    
     # email = serializers.EmailField(write_only=True)
     class Meta:
         model = Product
@@ -25,6 +29,16 @@ class ProductSerializer(serializers.ModelSerializer):
             'my_discount' 
             ]
     
+    # VALIDATOR ----> used to validate data before saving
+    # def validate_title(self, value):
+    #     qs = Product.object.filter(title__iexact=value)
+    #     if qs.exists():
+    #         raise serializers.ValidationError(
+    #             'Title already exists for this product'
+    #         )
+    #     return value
+
+
     # def create(self, validated_data):
     #     # return Product.objects.create(**validated_data)
     #     obj = super().create(**validated_data)
