@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # Custom permission class
-from api.mixins import IsStaffPermissionMixin
+from api.mixins import IsStaffPermissionMixin, UserQuerySetMixin
 # end ----->
 
 from api.authentication import TokenAuthentication
@@ -21,6 +21,7 @@ from .serializers import ProductSerializer
 
 # ListcreateAPI routes -> this class list the endpoint data with a create option
 class ProductCreateAPIView(
+    UserQuerySetMixin,
     IsStaffPermissionMixin,
     generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -51,14 +52,14 @@ class ProductCreateAPIView(
             content = title
         serializer.save(user=self.request.user, content=content)
     
-    def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
-        print(*args)
-        request = self.request
-        user = request.user
-        if not user.is_authenticated:
-            return Product.objects.none()
-        return qs.filter(user=request.user)
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     print(*args)
+    #     request = self.request
+    #     user = request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=request.user)
 
 
 class ProductListAPIView(
