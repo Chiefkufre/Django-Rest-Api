@@ -4,6 +4,7 @@ from rest_framework.reverse import reverse
 
 from .models import Product
 from .validators import validate_title
+from api.serializers import UserSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     my_discount = serializers.SerializerMethodField(read_only=True)
@@ -13,21 +14,22 @@ class ProductSerializer(serializers.ModelSerializer):
         lookup_field='pk',
     )
     title = serializers.CharField(validators=[validate_title])
-    
-    # email = serializers.EmailField(write_only=True)
+    user = UserSerializer(read_only=True)
+    email = UserSerializer(read_only=True)
     class Meta:
         model = Product
         fields = [
             'edit_url',
-            # 'email',
-            # 'user',
+            'email',
+            'user',
             'url', 
             'pk',
             'title', 
             'content',
             'price', 
             'sale_price',
-            'my_discount' 
+            'my_discount',
+            'public' 
             ]
     
     # VALIDATOR ----> used to validate data before saving

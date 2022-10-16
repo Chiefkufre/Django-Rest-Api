@@ -37,10 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party packages
     'rest_framework',
     'rest_framework.authtoken',
+
+    # Third-party APIs
+    'algoliasearch_django',
+
+    # Internal apps
     'api.apps.ApiConfig',
-    'products.apps.ProductsConfig'
+    'products.apps.ProductsConfig',
+    'search.apps.SearchConfig',
 ]
 
 MIDDLEWARE = [
@@ -139,4 +147,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
 
     ]
+}
+
+ALGOLIA = {
+    'APPLICATION_ID': 'EHSPPJC6F1',
+    'API_KEY': '07474b8dbd1a9aa3d95cfa1f162bdbd4',
+    'INDEX_PREFIX': "cfe",
 }

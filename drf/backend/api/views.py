@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 
 
 from products.serializers import ProductSerializer
+from rest_framework import generics
 from products.models import Product
 
 
