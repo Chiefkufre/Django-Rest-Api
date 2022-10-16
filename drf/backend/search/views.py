@@ -2,12 +2,24 @@ from django.shortcuts import render
 
 from rest_framework import generics
 from rest_framework import serializers
-
+from rest_framework.response import Response
 from products.models import Product
 from products.serializers import ProductSerializer
 
 
-class SearchListView(generics.ListAPIView):
+
+from . import client
+
+class SearchListView(generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q')
+        results = client.perform_search(query)
+        if query is None:
+            Response('', status=400)
+            # if self.request.user.is_au
+        return Response(results)
+
+class SearchOldListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
