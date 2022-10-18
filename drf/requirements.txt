@@ -3,4 +3,4 @@ djangorestframework
 pyyaml
 requests
 django-cor-headers
- 
+algoliasearch-django>=2.0,<3.0
