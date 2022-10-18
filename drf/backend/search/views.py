@@ -12,8 +12,13 @@ from . import client
 
 class SearchListView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
+        user = None
+        if request.user.is_authenticated:
+            user = request.user.username
         query = request.GET.get('q')
-        results = client.perform_search(query)
+        public = str(request.GET.get('public')) != '0'
+        tag = request.GET.get('tags') or None
+        results = client.perform_search(query, tags=[tag], user=user, public=public)
         if query is None:
             Response('', status=400)
             # if self.request.user.is_au
