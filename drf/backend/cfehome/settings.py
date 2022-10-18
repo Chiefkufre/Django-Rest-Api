@@ -75,6 +75,12 @@ CORS_ALLOWED_ORIGINS = [
     # enter all allowed origin here
 ]
 
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+
+        # enter all allowed origins here
+    ]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

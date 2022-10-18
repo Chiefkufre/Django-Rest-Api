@@ -1,13 +1,12 @@
 # from turtle import title
 from email import message
 from pydoc import apropos
-from urllib import request
 from rest_framework import authentication,generics, status, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # Custom permission class
-from api.mixins import IsStaffPermissionMixin, UserQuerySetMixin
+from api.mixins import IsStaffPermissionMixin
 # end ----->
 
 from api.authentication import TokenAuthentication
@@ -21,11 +20,11 @@ from .serializers import ProductSerializer
 
 # ListcreateAPI routes -> this class list the endpoint data with a create option
 class ProductCreateAPIView(
-    UserQuerySetMixin,
     IsStaffPermissionMixin,
     generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    
 
     # permission_classes = [permissions.IsAdminUser,IsStaffPermission]
 
@@ -50,16 +49,9 @@ class ProductCreateAPIView(
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(user=self.request.user, content=content)
+        serializer.save(content=content)
     
-    # def get_queryset(self, *args, **kwargs):
-    #     qs = super().get_queryset(*args, **kwargs)
-    #     print(*args)
-    #     request = self.request
-    #     user = request.user
-    #     if not user.is_authenticated:
-    #         return Product.objects.none()
-    #     return qs.filter(user=request.user)
+    
 
 
 class ProductListAPIView(
