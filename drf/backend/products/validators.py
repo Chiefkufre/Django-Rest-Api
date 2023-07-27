@@ -8,7 +8,7 @@ def validate_title(value):
     qs = Product.objects.filter(title__iexact=True)
     if qs.exists():
         raise serializers.ValidationError(
-            "Product with this title already exists"
+            "{value} with this title already exists"
         )
     return value
 
